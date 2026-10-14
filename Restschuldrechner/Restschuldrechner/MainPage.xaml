@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Restschuldrechner"
+             <!-- Eigenschaft Padding der Klasse ContenPage mit der Zuweisung des Wertes 20 gibt der Seite -->
+             <!-- einen Innenabstand von 20 Punkten -->
+             Padding="20"
+             x:Class="Restschuldrechner.MainPage">
+    <!-- Für die Nutzung des Converters muss dieser dem ResourceDictionary der MainPage.xaml  -->
+    <!-- hinzugefügt werden. Dies geschieht durch das Auflistungselement ContentPage.Resources -->
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <local:DoubleConverter x:Key="DoubleConverter"></local:DoubleConverter>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <!-- ScrollView-Element ermöglicht das Scrollen durch den Inhalt des ScrollView-Elements -->
+    <ScrollView>
+        <!-- mit Hilfe des StackLayouts können Kindelemente horizontal oder vertikal ausgerichtet werden; -->
+        <!-- durch Schachteleung dreier StackLayout-Elemente in einem äußeren StackLayout-Element werden -->
+        <!-- drei Spalten erzeugt -->
+        <StackLayout>
+            <!-- TitleStyle Stildefinition gibt an, dass es sich um eine Hauptüberschrift handelt -->
+            <Label Style="{DynamicResource TitleStyle}">Restschuldrechner</Label>
+            <!-- der Eigenschaft Name wird der Wert OuterLayout zugewiesen, damit das StackLayout aus dem C#-Quellcode -->
+            <!-- angesprochen werden kann und dessen Eigenschaften zur Laufzeit verändert werden können; -->
+            <!-- dies ermöglicht es, dass sich die Ausrichtung des StackLayouts je nach Geräteausrichtung ändert -->
+            <StackLayout x:Name="OuterLayout">
+                <StackLayout>
+                    <!-- SubtitleStyle Stildefinition gibt an, dass es sich um eine Unterüberschrift handelt -->
+                    <Label Style="{DynamicResource SubtitleStyle}">Angaben zum Darlehen</Label>
+                    <!-- das Label-Element zeigt eine Beschriftung des Entry-Element an, welches zur Texteingabe dient; -->
+                    <!-- die Benutzereingabe (Wert) wird über eine Datenbindung der Eigenschaft Text in einer öffentlichen -->
+                    <!-- Eigenschaft einer View-Model-Klasse abgelegt -->
+                    <Label>Darlehenshöhe (€)</Label>
+                    <!-- der DoubleConverter erlaubt dem Benutzer die Eingabe eines Kommas als Dezimaltrennzeichen anstelle eines Punktes, -->
+                    <!-- da das .NET-MAUI-Datenbindungssystem nicht korrekt mit lokalisierten Dezimaleingaben umgeht -->
+                    <Entry Text="{Binding KreditSumme,
+       Converter={StaticResource DoubleConverter}}"></Entry>
+                    <Label>Zinssatz (%)</Label>
+                    <Entry Text="{Binding Zinsfuss, 
+       Converter={StaticResource DoubleConverter}}"></Entry>
+                    <Label>Anfängliche Tilgung (%)</Label>
+                    <Entry Text="{Binding TilgungsSatz, 
+       Converter={StaticResource DoubleConverter}}"></Entry>
+                    <Label>Zinsbindung (Jahre)</Label>
+                    <Entry Text="{Binding Zinsbindung}"></Entry>
+
+                </StackLayout>
+                <StackLayout>
+                    <Label Style="{DynamicResource SubtitleStyle}">Ergebnis</Label>
+                    <!-- XAML-Markup für den Textbereich: Anlegen zweier Label-Elemente für Beschriftung und berechneten Wert; -->
+                    <!-- über Datenbindung werden die berechneten Werte auf die Oberfläche gebracht; -->
+                    <!-- innerhalb der Datenbindungsausdrücke wird ein zusätzliches Darstellungsformat (StringFormat='{0:C}') angegeben, -->
+                    <!-- dadurch werden alle berechneten Werte im Währungsformat mit zwei Nachkommstellen ausgegeben  -->
+                    <Label>Zahlungen
+                    </Label>
+                    <Label Text="{Binding Zahlungen, StringFormat='{0:C}'}"></Label>
+                    <Label>Davon Zinsen</Label>
+                    <Label Text="{Binding Zinszahlungen, StringFormat='{0:C}'}"></Label>
+                    <Label>Davon Tilgung</Label>
+                    <Label Text="{Binding Tilgung, StringFormat='{0:C}'}"></Label>
+                    <Label>Restschuld</Label>
+                    <Label Text="{Binding Restschuld, StringFormat='{0:C}'}"></Label>
+                    
+                <!-- grafische Darstellung/Ausgabe (Balkendiagramm) der Gesamtschuld und der Restschuld 
+                durch zwei Rectangle-Elemente, welche zur Laufzeit als Rechtecke gerendert werden -->
+                </StackLayout>
+                <StackLayout>
+                    <Label Style="{DynamicResource SubtitleStyle}">Ergebnis (grafisch)</Label>
+                    <StackLayout Orientation="Horizontal">
+                        <Rectangle WidthRequest="30" 
+                BackgroundColor="Gray" 
+                <!-- die Höhe des ersten Balkens setzen wir konstant fest, da sich die Höhe der Gesamtschuld während -->
+                <!-- der Laufzeit nicht verändert -->
+                HeightRequest="250">
+                        </Rectangle>
+
+                        <Rectangle WidthRequest="30" 
+                <!-- die Höhe des zweiten Balkens generieren wir dynamisch zur Laufzeit via Datenbindung -->
+                HeightRequest="{Binding AnteilRestschuld}"
+                BackgroundColor="Red"
+                VerticalOptions="End" >
+                        </Rectangle>
+                    </StackLayout>
+
+                </StackLayout>
+            </StackLayout>
+
+        </StackLayout>
+    </ScrollView>
+</ContentPage>
