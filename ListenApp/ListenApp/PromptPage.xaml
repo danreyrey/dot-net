@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ListenApp.PromptPage"
+             xmlns:viewmodel="clr-namespace:ListenApp.ViewModel"
+             x:DataType="viewmodel:MainViewModel"
+             BackgroundColor="Transparent"        
+             xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
+             ios:Page.ModalPresentationStyle="OverFullScreen">
+ 
+    <Grid>
+        <Grid.GestureRecognizers>
+            <TapGestureRecognizer Tapped="TapGestureRecognizer_OnTapped" />
+        </Grid.GestureRecognizers>
+        <VerticalStackLayout>
+            <Border
+                VerticalOptions="End"
+                Background="White"
+                StrokeShape="{RoundRectangle CornerRadius=20}"
+                Margin="30"
+                Padding="30">
+                <Entry 
+                       TextColor="Black"
+                       PlaceholderColor="Black"
+                       Placeholder="Edit here!" />
+            </Border>
+            <Button 
+                Text="Save Changes"
+                TextColor="Black"
+                VerticalOptions="End"
+                Background="White"
+                Margin="30"
+                Padding="30"
+                Clicked="Button_OnClicked" />
+        </VerticalStackLayout>    
+    </Grid>
+</ContentPage>

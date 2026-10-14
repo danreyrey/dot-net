@@ -1,0 +1,114 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ListenApp.MainPage"
+             xmlns:viewmodel="clr-namespace:ListenApp.ViewModel"
+             x:DataType="viewmodel:MainViewModel"
+             xmlns:models="clr-namespace:ListenApp"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:dx="http://schemas.devexpress.com/maui"
+             xmlns:dxcv="clr-namespace:DevExpress.Maui.CollectionView;assembly=DevExpress.Maui.CollectionView"
+             xmlns:system="clr-namespace:System;assembly=System.Runtime">
+
+    <!-- The InvertedBoolConverter allows users to convert a bool to its inverse.  -->
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    
+    <Grid RowDefinitions="100, Auto, *"
+          ColumnDefinitions=".75*, .25*"
+          Padding="10"
+          RowSpacing="10"
+          ColumnSpacing="10">
+              
+        <Image Grid.ColumnSpan="2"
+               Source="checkmark.png"
+               BackgroundColor="Transparent"/>
+        
+        <Entry Placeholder="Enter List"
+               Text="{Binding Text}"
+               Grid.Row="1"
+               IsVisible="{Binding IsEditEnabled, Converter={StaticResource InvertedBoolConverter }}"/>
+        
+        <Button Text="Add"
+                BackgroundColor="DodgerBlue"
+                Command="{Binding AddCommand}"
+                Grid.Row="1"
+                Grid.Column="1"
+                Grid.ColumnSpan="2"
+                IsVisible="{Binding IsEditEnabled, Converter={StaticResource InvertedBoolConverter }}"/>
+        
+        <!-- <Entry x:Name="EditEntry" -->
+        <!--        Placeholder="Edit List" -->
+        <!--        Text="{Binding Text}" -->
+        <!--        Grid.Row="1" -->
+        <!--        IsVisible="{Binding IsEditEnabled}" /> -->
+        <!-- -->
+        <!-- <Button x:Name="EditButton" -->
+        <!--         Text="Edit" -->
+        <!--         Command="{Binding EditListCommand}" -->
+        <!--         Grid.Row="1" -->
+        <!--         Grid.Column="1" -->
+        <!--         Grid.ColumnSpan="2" -->
+        <!--         IsVisible="{Binding IsEditEnabled}"/> -->
+            
+        <dx:DXCollectionView  Grid.Row="2" Grid.ColumnSpan="2"
+                              ItemsSource="{Binding Items}"
+                              SelectionMode="None"
+                              AllowDragDropItems="True"
+                              DragItem="collectionView_OnDragItem"
+                              DropItem="collectionView_DropItem"
+                              CompleteItemDragDrop="collectionView_CompleteItemDragDrop">
+            <dxcv:DXCollectionView.ItemTemplate>
+                <DataTemplate x:DataType="{x:Type models:Lists}">
+                    <SwipeView>
+                        <SwipeView.RightItems>
+                            <SwipeItems>
+                                <SwipeItem IsVisible="{Binding Source = {RelativeSource AncestorType={x:Type viewmodel:MainViewModel}}, Path=IsSwipeViewEnabled}" 
+                                           Text="Delete"
+                                           BackgroundColor="Red"
+                                           Command="{Binding Source = {RelativeSource AncestorType={x:Type viewmodel:MainViewModel}}, Path=DeleteCommand}"
+                                           CommandParameter="{Binding .}"/>
+                            </SwipeItems>
+                        </SwipeView.RightItems>
+                        <SwipeView.LeftItems>
+                            <SwipeItems>
+                                <SwipeItem IsVisible="{Binding Source = {RelativeSource AncestorType={x:Type viewmodel:MainViewModel}}, Path=IsSwipeViewEnabled}"
+                                           Text="Edit"
+                                           BackgroundColor="DodgerBlue"
+                                           Clicked="Button_Clicked"/>
+                            </SwipeItems>
+                        </SwipeView.LeftItems>
+                            <HorizontalStackLayout Padding="0.5"
+                                                   Margin="10"
+                                                   Spacing="5"
+                                                   HorizontalOptions="Center">
+                                <Border Padding="16,8"
+                                        StrokeThickness="2">
+                                    <Label Text="{Binding Title}"
+                                           FontSize="24"
+                                           LineBreakMode="TailTruncation"
+                                           HorizontalTextAlignment="Center">
+                                        <Label.MinimumWidthRequest>
+                                               <OnPlatform x:TypeArguments="system:Double">
+                                                   <On Platform="Android" Value="250"/>
+                                                   <On Platform="iOS" Value="20"/>
+                                               </OnPlatform>
+                                           </Label.MinimumWidthRequest>
+                                    </Label>
+                                </Border>
+                            <HorizontalStackLayout.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding Source = {RelativeSource AncestorType={x:Type viewmodel:MainViewModel}}, Path=TapCommand}"
+                                    CommandParameter="{Binding .}"></TapGestureRecognizer>
+                            </HorizontalStackLayout.GestureRecognizers>
+                        </HorizontalStackLayout>
+                    </SwipeView>
+                </DataTemplate>
+            </dxcv:DXCollectionView.ItemTemplate>
+        </dx:DXCollectionView>
+    </Grid>   
+</ContentPage>

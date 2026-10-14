@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ListenApp.DetailPage"
+             xmlns:viewmodel="clr-namespace:ListenApp.ViewModel"
+             x:DataType="viewmodel:DetailViewModel"
+             xmlns:models="clr-namespace:ListenApp"
+             Title="{Binding Headline}"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:dx="http://schemas.devexpress.com/maui"
+             xmlns:dxcv="clr-namespace:DevExpress.Maui.CollectionView;assembly=DevExpress.Maui.CollectionView"
+             xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls">
+
+    <ContentPage.Resources>
+            <ResourceDictionary>
+                <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+            </ResourceDictionary>
+        </ContentPage.Resources>
+    
+    <StackLayout Padding="20"
+                 Spacing="10">
+        <!-- <Label Text="{Binding Headline}" -->
+        <!--        FontSize="25"  -->
+        <!--        VerticalOptions="Center" -->
+        <!--        HorizontalOptions="Center"/> -->
+        
+        <!-- <Button Text="Go Back" -->
+        <!--         Command="{Binding GoBackCommand}"/> -->
+        
+        <!-- <Button Text="Test" -->
+        <!--         Command="{Binding ShowNotificationCommand}"/> -->
+        
+        <Entry Placeholder="Enter Task"
+               Text="{Binding Text1}"
+               IsVisible="{Binding IsEditEnabled, Converter={StaticResource InvertedBoolConverter }}" />
+        
+        <Button Text="Add"
+                BackgroundColor="DodgerBlue"
+                Command="{Binding AddCommand}"
+                IsVisible="{Binding IsEditEnabled, Converter={StaticResource InvertedBoolConverter}}"/>
+        
+        <Entry x:Name="EditEntry"
+               Placeholder="Edit Task"
+               Text="{Binding Text1}"
+               IsVisible="{Binding IsEditEnabled}" />
+        
+        <Button x:Name="EditButton"
+                Text="Edit"
+                BackgroundColor="DodgerBlue"
+                Command="{Binding EditTaskCommand}"
+                IsVisible="{Binding IsEditEnabled}"/>
+        
+            <StackLayout WidthRequest="300">
+                <SearchBar Placeholder="Search for tasks here"
+                           ios:SearchBar.SearchBarStyle="Minimal"
+                           TextChanged="OnTextChanged"/>
+            </StackLayout>
+        
+        <HorizontalStackLayout  Padding = "0"
+                                HorizontalOptions="End">
+            <!-- <Label Text="Oldest First" -->
+            <!--        FontSize="12"/> -->
+            <!-- <Switch OnColor="CornflowerBlue" -->
+            <!--         ThumbColor="Gray" -->
+            <!--         Toggled="OnToggled"/> -->
+            <Label Text="Latest First    "
+                   FontSize="12"
+                   HorizontalOptions="End"
+                   VerticalTextAlignment="Center"/>
+            <Switch OnColor="DodgerBlue"
+                    ThumbColor="LightGrey"
+                    HorizontalOptions="End"
+                    IsEnabled="{Binding IsSwitchEnabled}"
+                    Toggled="OnToggledDesc"/>
+            <HorizontalStackLayout.Padding>
+                <OnPlatform x:TypeArguments="Thickness">
+                    <On Platform="iOS" Value="0,0,0,15" />
+                    <On Platform="Android" Value="0,0,0,0" />
+                </OnPlatform>
+            </HorizontalStackLayout.Padding>
+        </HorizontalStackLayout>
+        <dx:DXCollectionView  ItemsSource="{Binding Items1}"
+                              SelectionMode="None"
+                              AllowDragDropItems="True"
+                              DragItem="collectionView_OnDragItem"
+                              DropItem="collectionView_DropItem"
+                              CompleteItemDragDrop="collectionView_CompleteItemDragDrop">
+            <dxcv:DXCollectionView.ItemTemplate>
+                <DataTemplate x:DataType="{x:Type models:Tasks}">
+                    <SwipeView>
+                        <SwipeView.RightItems>
+                            <SwipeItem IsVisible="{Binding Source = {RelativeSource AncestorType={x:Type viewmodel:DetailViewModel}}, Path=IsSwipeViewEnabled}"
+                                       Text="Delete"
+                                       BackgroundColor="Red"
+                                       Command="{Binding Source = {RelativeSource AncestorType={x:Type viewmodel:DetailViewModel}}, Path=DeleteCommand}"
+                                       CommandParameter="{Binding .}"/>
+                        </SwipeView.RightItems>
+                        <SwipeView.LeftItems>
+                            <SwipeItem IsVisible="{Binding Source = {RelativeSource AncestorType={x:Type viewmodel:DetailViewModel}}, Path=IsSwipeViewEnabled}"
+                                       Text="Edit"
+                                       BackgroundColor="DodgerBlue"
+                                       Command="{Binding Source = {RelativeSource AncestorType={x:Type viewmodel:DetailViewModel}}, Path=EnableEditCommand}"
+                                       CommandParameter="{Binding .}"/>
+                        </SwipeView.LeftItems>
+                        <HorizontalStackLayout Padding="0.5">
+                            <CheckBox x:Name="CheckBox"
+                                              Color="{AppThemeBinding Light=Grey, Dark=White}"
+                                              CheckedChanged="OnCheckBoxCheckedChanged"
+                                              IsChecked="{Binding IsCompletedTasks}"
+                                              BackgroundColor="{AppThemeBinding Light=White, Dark=Transparent}"/>
+                            <Border Padding="16,8">
+                                <HorizontalStackLayout>
+                                <Label Text="{Binding TitleTasks}"
+                                       FontSize="20"
+                                       MaxLines = "5"
+                                       LineBreakMode="TailTruncation"
+                                       WidthRequest="200"/>
+                                <Image Source="ct.png"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center"
+                                       WidthRequest="25"
+                                       HeightRequest="25"
+                                       IsVisible="{Binding IsCompletedTasks}"/>
+                                <Image Source="{AppThemeBinding Light=nct.png, Dark=nctinv.png}"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center"
+                                       WidthRequest="25"
+                                       HeightRequest="25"
+                                       IsVisible="{Binding IsCompletedTasks, Converter={StaticResource InvertedBoolConverter}}"/>
+                                </HorizontalStackLayout>
+                            </Border>
+                        </HorizontalStackLayout>
+                    </SwipeView>
+                </DataTemplate>
+            </dxcv:DXCollectionView.ItemTemplate>
+        </dx:DXCollectionView>
+    </StackLayout>
+</ContentPage>
